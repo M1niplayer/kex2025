@@ -1,0 +1,39 @@
+10 runs, fake manillaV2:
+
+BB84 rke mean: 0.4890625 and standard deviation: 0.027499556104371943
+
+BB84 qber mean: 0.04254437977314354 and standard deviation: 0.01102705988083775
+
+BB84 runs mean: 1.0 and standard deviation: 0.0
+
+B92 rke mean: 0.24609375 and standard deviation: 0.02591113117465156
+
+B92 qber mean: 0.0338243738915927 and standard deviation: 0.01922658945973991
+
+B92 runs mean: 1.0 and standard deviation: 0.0
+
+E91 rke mean: 0.506640625 and standard deviation: 0.028547713110302287
+
+E91 qber mean: 0.03426084735473981 and standard deviation: 0.01376084310116982
+
+E91 runs mean: 1.0 and standard deviation: 0.0
+
+10 runs, fake athensV2:
+
+BB84 rke mean: 0.49921875 and standard deviation: 0.025781250000000002
+
+BB84 qber mean: 0.01909161270072621 and standard deviation: 0.011451147584616564
+
+BB84 runs mean: 1.0 and standard deviation: 0.0
+
+B92 rke mean: 0.251953125 and standard deviation: 0.0294008571370058
+
+B92 qber mean: 0.012593775787795292 and standard deviation: 0.014231265198460633
+
+B92 runs mean: 1.0 and standard deviation: 0.0
+
+E91 rke mean: 0.508203125 and standard deviation: 0.02135615145755726
+
+E91 qber mean: 0.032896709304107166 and standard deviation: 0.01292069426634575
+
+E91 runs mean: 1.0 and standard deviation: 0.0

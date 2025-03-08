@@ -6,6 +6,8 @@ import abc
 from qiskit_aer.noise import NoiseModel, QuantumError, pauli_error
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 
+from secret_token import ibm_token 
+
 """
 File for defining objects QKDBits, QKDResult and QKDScheme.
 """
@@ -121,7 +123,7 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
     """
     def run(self, shots: int, error_allowed: int, backend: str | IBMBackend | None, noise: bool, real: bool) -> QKDResults:
         if real:
-            QiskitRuntimeService.save_account(channel="ibm_quantum", token="5c637bdb0dbf0622b494355f6b37089c0669ff9773c4cbd2aaf61cca27d8623390b8ac5bd3557c538b8dc93cc50e3e34a43f680325c6055f72bb29b37b5627da", overwrite=True)
+            QiskitRuntimeService.save_account(channel="ibm_quantum", token=ibm_token, overwrite=True)
             service = QiskitRuntimeService()
             #backend_ibm = service.least_busy(operational=True, simulator=False, min_num_qubits=127)
             backend_ibm = service.backend("ibm_brisbane")
