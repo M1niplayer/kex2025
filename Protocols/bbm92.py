@@ -6,7 +6,7 @@ import core
 """
 Defines E91 Scheme
 """
-class E91Scheme(core.QKDScheme):
+class BBM92Scheme(core.QKDScheme):
     def __init__(self, eavesdropper: bool):
         simulator = QasmSimulator()
         
