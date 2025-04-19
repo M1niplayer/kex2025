@@ -132,7 +132,7 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
             noise_model = NoiseModel()
             p_error = 0.05
             bit_flip = pauli_error([('X', p_error), ('I', 1 - p_error)])
-            wet_rock = phase_amplitude_damping_error(0.05, 0.05, 0) #phase, amplitude, lim->0 stuff
+            wet_rock = phase_amplitude_damping_error(0.5, 0.5, 0) #phase, amplitude, lim->0 stuff
             noise_model.add_quantum_error(wet_rock, ['h', 'measure'], [0]) #så instructions är vilka gates?
             simulator = AerSimulator(noise_model=noise_model)
             circ = transpile(self._circuit, simulator)
