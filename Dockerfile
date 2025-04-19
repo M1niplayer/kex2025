@@ -15,8 +15,6 @@ RUN python3 -m venv .venv
 RUN . .venv/bin/activate 
 #. (dot) command is POSIX-standard, source is Bash. there's no difference between the two in bash 😂
 
-COPY . .
+COPY ./Protocols requirements.txt ./
 
 RUN pip install -r requirements.txt
-
-CMD ["python3", "Protocols/main.py"]
