@@ -3,10 +3,9 @@ from qiskit_aer import QasmSimulator, AerSimulator
 from qiskit_ibm_runtime import IBMBackend, QiskitRuntimeService, Estimator, SamplerV2, Session
 from qiskit_ibm_runtime.fake_provider import FakeManilaV2
 import abc
-from qiskit_aer.noise import NoiseModel, QuantumError, pauli_error
+from qiskit_aer.noise import NoiseModel, QuantumError, pauli_error, phase_amplitude_damping_error
 from qiskit.transpiler.preset_passmanagers import generate_preset_pass_manager
 
-from secret_token import ibm_token 
 
 """
 File for defining objects QKDBits, QKDResult and QKDScheme.
@@ -75,8 +74,8 @@ class QKDResults():
 
     def raw_key_efficiency(self):
         self._calc_certainty_count()
-        print("[dgb] certainty_count", self._certainty_count) #dgb?
-        print("[dgb] total_count", self._total_count)
+        # print("[dgb] certainty_count", self._certainty_count) #dgb?
+        # print("[dgb] total_count", self._total_count)
         return self._certainty_count / (self._total_count*self._number_of_runs)#should it not be number of bits that are the same, not whether same basis used? also should be smaller after comparision
 
     def rke(self): # not needed?
@@ -86,8 +85,8 @@ class QKDResults():
         self._calc_certainty_count()
         if self._bit_error_count is None:
             self._bit_error_count = sum([count for (bits, count) in self._bit_counts.items() if bits.certain and bits.error])
-        print("[dgb] bit_error_count", self._bit_error_count)
-        print("[dgb] certainty_count", self._certainty_count)
+        # print("[dgb] bit_error_count", self._bit_error_count)
+        # print("[dgb] certainty_count", self._certainty_count)
         if self._certainty_count > 0:
             return self._bit_error_count / self._certainty_count #?
         else:
@@ -123,7 +122,7 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
     """
     def run(self, shots: int, error_allowed: int, backend: str | IBMBackend | None, noise: bool, real: bool) -> QKDResults:
         if real:
-            QiskitRuntimeService.save_account(channel="ibm_quantum", token=ibm_token, overwrite=True)
+            QiskitRuntimeService.save_account(channel="ibm_quantum", token="g", overwrite=True)
             service = QiskitRuntimeService()
             #backend_ibm = service.least_busy(operational=True, simulator=False, min_num_qubits=127)
             backend_ibm = service.backend("ibm_brisbane")
@@ -133,7 +132,8 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
             noise_model = NoiseModel()
             p_error = 0.05
             bit_flip = pauli_error([('X', p_error), ('I', 1 - p_error)])
-            noise_model.add_quantum_error(bit_flip, ['h', 'measure'], [0])
+            wet_rock = phase_amplitude_damping_error(0.05, 0.05, 0) #phase, amplitude, lim->0 stuff
+            noise_model.add_quantum_error(wet_rock, ['h', 'measure'], [0]) #så instructions är vilka gates?
             simulator = AerSimulator(noise_model=noise_model)
             circ = transpile(self._circuit, simulator)
         elif backend is None:
@@ -155,7 +155,7 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
                 job = simulator.run(circ, shots = shots)
             
             result = job.result().get_counts()
-            print("[dbg] result", result)
+            # print("[dbg] result", result)
             
             for bits_str, bits_count in result.items(): # for every qubit sent
                 bits_str = bits_str.replace(" ", "")
