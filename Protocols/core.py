@@ -120,7 +120,7 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
     Here is where the schemes are run,
     returns and instance of QKDResults
     """
-    def run(self, shots: int, error_allowed: int, backend: str | IBMBackend | None, noise: bool, real: bool) -> QKDResults:
+    def run(self, shots: int, error_allowed: int, backend: str | IBMBackend | None, noise: bool, real: bool, phase_flip: float, amplitude_dampening: float) -> QKDResults:
         if real:
             QiskitRuntimeService.save_account(channel="ibm_quantum", token="g", overwrite=True)
             service = QiskitRuntimeService()
@@ -130,9 +130,9 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
             isa_circuit = pm.run(self._circuit)
         elif noise:
             noise_model = NoiseModel()
-            p_error = 0.05
-            bit_flip = pauli_error([('X', p_error), ('I', 1 - p_error)])
-            wet_rock = phase_amplitude_damping_error(0.5, 0.5, 0) #phase, amplitude, lim->0 stuff
+            #p_error = 0.05
+            #bit_flip = pauli_error([('X', p_error), ('I', 1 - p_error)])
+            wet_rock = phase_amplitude_damping_error(amplitude_dampening, phase_flip, 0) #phase, amplitude, lim->0 stuff
             noise_model.add_quantum_error(wet_rock, ['h', 'measure'], [0]) #så instructions är vilka gates?
             simulator = AerSimulator(noise_model=noise_model)
             circ = transpile(self._circuit, simulator)
