@@ -31,19 +31,29 @@ if __name__ == "__main__":
         "bbm92": data(BBM92Scheme(False)),
     }
     error_allowed = 0.5
-    number_of_runs = 100
+    number_of_runs = 10
     # [print(qkd[x]) for x in qkd] # use for debugging
+
+    parameter_granularity = 10
+    allowed_error = 0.15
     
     args = {}
-    for runs in range(number_of_runs):
-         print(runs)
-         for key in qkd.keys():
-            res = qkd[key].protocol.run(256, 0.99, FakeManilaV2(), True, False, 0.7, 0.3) 
-            qkd[key].raw_key.append(res.rke())
-            qkd[key].qbit_error.append(res.qber())
-            qkd[key].runs.append(res.n_runs()) #skulle du tro det om jag sa att jag inte pallade refaktorera mera?
+    for key in qkd.keys():
+        csv = open(key+".csv", "w")
+        csv.write("phase error,amp error,run,rke,qber,tries\n")
+        for phase in range(parameter_granularity+1):
+            for amp in range(parameter_granularity+1):
+                for run in range(number_of_runs):
+                    res = qkd[key].protocol.run(256, allowed_error, FakeManilaV2(), True, False, phase*(0.5/parameter_granularity), amp*(0.5/parameter_granularity))
 
-print(qkd)
+                    csv.write(str(phase*(0.5/parameter_granularity)) +","+ str(amp*(0.5/parameter_granularity))+","+str(run)+","+str(res.rke())+","+str(res.qber())+","+str(res.n_runs())+"\n")
+                    #qkd[key].raw_key.append(res.rke())
+                    #qkd[key].qbit_error.append(res.qber())
+                    #qkd[key].runs.append(res.n_runs()) #skulle du tro det om jag sa att jag inte pallade refaktorera mera?
+    
+        csv.close()
+
+#print(qkd)
         
     
     # print("\n")
