@@ -120,7 +120,7 @@ class QKDScheme(abc.ABC): # abc = abstract base classes
     Here is where the schemes are run,
     returns and instance of QKDResults
     """
-    def run(self, shots: int, error_allowed: int, backend: str | IBMBackend | None, noise: bool, real: bool, phase_flip: float, amplitude_dampening: float) -> QKDResults:
+    def run(self, shots: int, error_allowed: float, backend: str | IBMBackend | None, noise: bool, real: bool, phase_flip: float, amplitude_dampening: float) -> QKDResults:
         if real:
             QiskitRuntimeService.save_account(channel="ibm_quantum", token="g", overwrite=True)
             service = QiskitRuntimeService()
