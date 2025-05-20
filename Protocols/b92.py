@@ -1,4 +1,5 @@
 from qiskit import QuantumCircuit, transpile, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Measure, library
 from qiskit_aer import QasmSimulator
 
 import core
@@ -36,7 +37,8 @@ class B92Scheme(core.QKDScheme):
 
         # Sender, sends in Alice basis
         circuit.reset(qreg_q[0])
-        circuit.h(qreg_q[0]).c_if(creg_s_bit, 1)
+        circuit.append(library.HGate(label="noise"), [qreg_q[0]]).c_if(creg_s_bit, 1)
+        
         circuit.barrier(qreg_q[0])
 
         # Eavesdropper, measures in basis and send measured bit in same basis
@@ -48,8 +50,8 @@ class B92Scheme(core.QKDScheme):
 
 
         # Receiver, measure in Bob's basis
-        circuit.h(qreg_q[0]).c_if(creg_r_bit, 0)
-        circuit.measure(qreg_q[0], creg_r_certain[0])
+        circuit.append(library.HGate(label="noise"), [qreg_q[0]]).c_if(creg_r_bit, 0)
+        circuit.append(Measure(label="noise"), [qreg_q[0]], [creg_r_certain[0]])
 
         self._circuit = transpile(circuit, simulator)
         self._eavesdropper = eavesdropper
