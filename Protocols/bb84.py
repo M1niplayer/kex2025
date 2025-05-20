@@ -1,4 +1,5 @@
 from qiskit import QuantumCircuit, transpile, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Measure, library
 from qiskit_aer import QasmSimulator
 from qiskit_ibm_runtime import IBMBackend
 #from random import randint
@@ -41,9 +42,10 @@ class BB84Scheme(core.QKDScheme):
         circuit.h(qreg_q[0])
         circuit.measure(qreg_q[0], creg_s_bit[0])
         circuit.barrier(qreg_q[0]) # doesn't do anything? just shows up as a line in the picture
+        
 
         # Sender, randomises bit that Alice will send and puts it in polarised basis if that is used
-        circuit.h(qreg_q[0]).c_if(creg_s_bas, 1)
+        circuit.append(library.HGate(label="noise"), [qreg_q[0]]).c_if(creg_s_bas, 1)
         circuit.barrier(qreg_q[0])
 
         # Eavesdropper, measures (in defined basis) and sends in same basis
@@ -53,10 +55,8 @@ class BB84Scheme(core.QKDScheme):
             circuit.h(qreg_q[0]).c_if(creg_e_bas, 1)
 
         # Receiver, measures in defined basis
-        circuit.h(qreg_q[0]).c_if(creg_r_bas, 1)
-        circuit.measure(qreg_q[0], creg_r_bit[0])
-
-        circuit.draw()
+        circuit.append(library.HGate(label="noise"), [qreg_q[0]]).c_if(creg_r_bas, 1)
+        circuit.append(Measure(label="noise"), [qreg_q[0]], [creg_r_bit[0]])
 
         self._circuit = circuit
         self._eavesdropper = eavesdropper

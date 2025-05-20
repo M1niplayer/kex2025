@@ -30,11 +30,11 @@ if __name__ == "__main__":
         "b92": data(B92Scheme(False)),
         "bbm92": data(BBM92Scheme(False)),
     }
-    number_of_runs = 10
+    number_of_runs = 100
     # [print(qkd[x]) for x in qkd] # use for debugging
 
     parameter_granularity = 10
-    allowed_error = 0.5
+    allowed_error = 0.2
     
     args = {}
     for key in qkd.keys():

@@ -1,4 +1,5 @@
 from qiskit import QuantumCircuit, transpile, QuantumRegister, ClassicalRegister
+from qiskit.circuit import Measure, library
 from qiskit_aer import QasmSimulator
 
 import core
@@ -35,7 +36,7 @@ class BBM92Scheme(core.QKDScheme):
         # Entanglement, by "bell gate"
         circuit.reset(qreg_q[0])
         circuit.reset(qreg_q[1])
-        circuit.h(qreg_q[0])
+        circuit.append(library.HGate(), [qreg_q[0]])
         circuit.cx(qreg_q[0], qreg_q[1])
         circuit.barrier(qreg_q)
 
@@ -47,10 +48,10 @@ class BBM92Scheme(core.QKDScheme):
             circuit.barrier(qreg_q[0], qreg_q[1])
 
         # Measurement of Alice and Bob
-        circuit.h(qreg_q[0]).c_if(creg_s_bas, 1)
-        circuit.measure(qreg_q[0], creg_s_bit[0])
-        circuit.h(qreg_q[1]).c_if(creg_r_bas, 1)
-        circuit.measure(qreg_q[1], creg_r_bit[0])
+        circuit.append(library.HGate(label="noise"), [qreg_q[0]]).c_if(creg_s_bas, 1)
+        circuit.append(Measure(label="noise"), [qreg_q[0]], [creg_s_bit[0]])
+        circuit.append(library.HGate(label="noise"), [qreg_q[1]]).c_if(creg_r_bas, 1)
+        circuit.append(Measure(label="noise"), [qreg_q[1]], [creg_r_bit[0]])
         
         self._circuit = transpile(circuit, simulator)
         self._eavesdropper = eavesdropper
